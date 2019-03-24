@@ -12,9 +12,41 @@ namespace laba1
 {
     public partial class Form1 : Form
     {
+        enum Sign : int { MoreThan = 1, LessThan = -1 };
+
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private void CreateTable()
+        {
+            HideStartFields();
+        }
+
+        private void HideStartFields()
+        {
+
+        }
+
+        private void Process()
+        {
+
+        }
+
+        private void ParseData()
+        {
+
+        }
+
+        private void Calculate()
+        {
+
+        }
+
+        private void ShowResult()
+        {
+
         }
     }
 }
