@@ -1,6 +1,6 @@
 ﻿namespace laba1
 {
-    partial class Form1
+    partial class laba1
     {
         /// <summary>
         /// Required designer variable.

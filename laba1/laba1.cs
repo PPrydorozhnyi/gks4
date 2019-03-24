@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace laba1
 {
-    public partial class Form1 : Form
+    public partial class laba1 : Form
     {
-        public Form1()
+        public laba1()
         {
             InitializeComponent();
         }
