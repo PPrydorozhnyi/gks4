@@ -25,6 +25,7 @@ namespace laba1
         private List<TextBox> textBoxesforB;
         private double[] functionsX;
         private List<int> indexesOfEquel;
+        private List<double> yVector;
 
         public Form1()
         {
@@ -38,6 +39,7 @@ namespace laba1
             comboBoxes = new List<ComboBox>();
             textBoxesforB = new List<TextBox>();
             indexesOfEquel = new List<int>();
+            yVector = new List<double>();
            
         }
 
@@ -201,8 +203,12 @@ namespace laba1
         {
             function = 0;
             result = new double[amountOfRoots];
+            importantIndexesOfRoots.Clear();
+            double[,] table_result;
             Simplex S = new Simplex(table);
-            S.Calculate(result);
+            table_result = S.Calculate(result);
+            yVector.Clear();
+
             for (int i = 0; i < amountOfRoots; ++i)
             {
                 //indexes of function
@@ -213,16 +219,31 @@ namespace laba1
                 }
             }
 
+            for(int i = 1 + amountOfRoots; i < amountOfRoots + amountOfRestriction + 1; ++i)
+            {
+                yVector.Add(table_result[amountOfRestriction, i]);
+            }
         }
 
         private void ShowResult()
         {
             outputBox.Show();
+            outputBox.Clear();
             outputBox.AppendText("F(x) = " + function + "\n");
             foreach(int element in importantIndexesOfRoots)
             {
                 outputBox.AppendText("x[" + (element+1) + "] = " + result[element] + "\n");
             }
+            for(int element = 0; element < yVector.Count; ++element)
+            {
+                if (element == 0)
+                    outputBox.AppendText("Yv { " + yVector[element] + ", ");
+                else if (element == yVector.Count - 1)
+                    outputBox.AppendText(yVector[element] + " }\n");
+                else
+                    outputBox.AppendText(yVector[element] + ", ");
+            }
+
             //for(int i = 0; i < result.Length; ++i)
             //{
             //    outputBox.AppendText("" + result[i] + "\n");
