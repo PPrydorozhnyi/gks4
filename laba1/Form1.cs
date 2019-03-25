@@ -25,13 +25,14 @@ namespace laba1
         private List<TextBox> textBoxesforB;
         private double[] functionsX;
         private List<int> indexesOfEquel;
+        List<Label> labelsForTable;
         private List<double> yVector;
 
         public Form1()
         {
             InitializeComponent();
             outputBox.Hide();
-            acceptTable.Hide();
+            acceptTable.Enabled = false;
             importantIndexesOfRoots = new List<int>();
             inputAmountOfRoots.SelectedIndex = 1;
             inputAmountOfRestrictions.SelectedIndex = 1;
@@ -39,8 +40,10 @@ namespace laba1
             comboBoxes = new List<ComboBox>();
             textBoxesforB = new List<TextBox>();
             indexesOfEquel = new List<int>();
+            labelsForTable = new List<Label>();
+            inputAmountOfRestrictions.DropDownStyle = ComboBoxStyle.DropDownList;
+            inputAmountOfRoots.DropDownStyle = ComboBoxStyle.DropDownList;
             yVector = new List<double>();
-           
         }
 
         private void acceptParemetrs_Click(object sender, EventArgs e)
@@ -53,26 +56,57 @@ namespace laba1
         private void CreateTable()
         {
             HideStartFields();
-            
-            for (int j = 0; j < amountOfRestriction + 1; ++j)
+
+            TextBox textBox;
+            ComboBox comboBox;
+            Label label;
+
+            for (int i = 0; i < amountOfRoots + 2; ++i)
+            {
+                label = new Label()
+                {
+                    Name = i.ToString(),
+                    Location = new Point(25 + 40 * i, 43),
+                    ForeColor = Color.White,
+                    AutoSize = true,
+                };
+
+                if(i == amountOfRoots)
+                {
+                    label.Text = "sign";
+                } else if (amountOfRoots + 1 == i)
+                {
+                    label.Text = "B";
+                } else
+                {
+                    label.Text = "X" + (i + 1);
+                }
+
+                labelsForTable.Add(label);
+                this.Controls.Add(label);
+            }
+
+                for (int j = 0; j < amountOfRestriction + 1; ++j)
             {
                 for (int i = 0; i < amountOfRoots + 2; ++i)
                 {
                     if (i < amountOfRoots)
                     {
-                        TextBox textBox = new TextBox()
-                        { Name = i.ToString(), Location = new Point(2 + 40 * i, 3 + 30*j), Width = 40, Height = 30 };
+                        textBox = new TextBox()
+                        { Name = i.ToString(), Location = new Point(12 + 40 * i, 63 + 30*j), Width = 40, Height = 30 };
                         this.Controls.Add(textBox);
                         boxesList.Add(textBox);
                     }
                     else if(i == amountOfRoots)
                     {
-                        ComboBox comboBox = new ComboBox()
+                        comboBox = new ComboBox()
                         {
                             Name = i.ToString(),
-                            Location = new Point(2 + 40 * i, 3 + 30 * j),
+                            Location = new Point(12 + 40 * i, 63 + 30 * j),
                             Width = 40,
                             Height = 30,
+                            DropDownStyle = ComboBoxStyle.DropDownList,
+                          
                         };
                         if (j != amountOfRestriction)
                         {
@@ -81,6 +115,7 @@ namespace laba1
                         else
                         {
                             comboBox.Items.AddRange(new string[] { "max", "min"});
+                            comboBox.Width = 50;
                         }
                         comboBox.SelectedIndex = 0;
                         this.Controls.Add(comboBox);
@@ -88,8 +123,8 @@ namespace laba1
                     }
                     else if(j != amountOfRestriction)
                     {
-                        TextBox textBox = new TextBox()
-                        { Name = i.ToString(), Location = new Point(2 + 40 * i, 3 + 30 * j), Width = 40, Height = 30 };
+                        textBox = new TextBox()
+                        { Name = i.ToString(), Location = new Point(12 + 40 * i, 63 + 30 * j), Width = 40, Height = 30 };
                         this.Controls.Add(textBox);
                         textBoxesforB.Add(textBox);
                     }
@@ -100,16 +135,35 @@ namespace laba1
 
         private void HideStartFields()
         {
-            inputAmountOfRestrictions.Hide();
-            inputAmountOfRoots.Hide();
-            acceptParemetrs.Hide();
-            roots.Hide();
+            inputAmountOfRestrictions.Enabled = false;
+            inputAmountOfRoots.Enabled = false;
+            acceptParemetrs.Enabled = false;
 
-            acceptTable.Show();
+            acceptTable.Enabled = true;
+        }
+
+        private void DisableTable()
+        {
+            acceptTable.Enabled = false;
+            foreach (ComboBox box in comboBoxes)
+            {
+                box.Enabled = false;
+            }
+
+            foreach (TextBox box in boxesList)
+            {
+                box.Enabled = false;
+            }
+
+            foreach (TextBox box in textBoxesforB)
+            {
+                box.Enabled = false;
+            }
         }
 
         private void Process()
         {
+            DisableTable();
             ParseData();
             Calculate();
             ShowResult();
@@ -208,7 +262,6 @@ namespace laba1
             Simplex S = new Simplex(table);
             table_result = S.Calculate(result);
             yVector.Clear();
-
             for (int i = 0; i < amountOfRoots; ++i)
             {
                 //indexes of function
@@ -219,40 +272,36 @@ namespace laba1
                 }
             }
 
-            for(int i = 1 + amountOfRoots; i < amountOfRoots + amountOfRestriction + 1; ++i)
+            for (int i = 1 + amountOfRoots; i < amountOfRoots + amountOfRestriction + 1; ++i)
             {
                 yVector.Add(table_result[amountOfRestriction, i]);
             }
+
         }
 
         private void ShowResult()
         {
-            outputBox.Show();
             outputBox.Clear();
+
+            outputBox.Location = new Point(12, comboBoxes.ElementAt(comboBoxes.Count - 1).Location.Y + 40);
+            outputBox.Show();
             outputBox.AppendText("F(x) = " + function + "\n");
             foreach(int element in importantIndexesOfRoots)
             {
-                outputBox.AppendText("x[" + (element+1) + "] = " + result[element] + "\n");
+                outputBox.AppendText("x" + (element+1) + " = " + result[element] + "\n");
             }
-            for(int element = 0; element < yVector.Count; ++element)
+
+            for (int element = 0; element < yVector.Count; ++element)
             {
                 if (element == 0)
-                    outputBox.AppendText("Yv { " + yVector[element] + ", ");
+                    outputBox.AppendText("Yopt = { " + yVector[element] + ", ");
                 else if (element == yVector.Count - 1)
                     outputBox.AppendText(yVector[element] + " }\n");
                 else
                     outputBox.AppendText(yVector[element] + ", ");
             }
 
-            //for(int i = 0; i < result.Length; ++i)
-            //{
-            //    outputBox.AppendText("" + result[i] + "\n");
-            //}
-            //outputBox.AppendText("----------------");
-            //for (int i = 1; i < functionsX.Length; ++i)
-            //{
-            //    outputBox.AppendText("" + functionsX[i] + "\n");
-            //}
+
 
         }
 
@@ -260,5 +309,49 @@ namespace laba1
         {
             Process();
         }
+
+        private void resetButton_Click(object sender, EventArgs e)
+        {
+            outputBox.Hide();
+
+            foreach (ComboBox box in comboBoxes)
+            {
+                this.Controls.Remove(box);
+                box.Dispose();
+            }
+
+            foreach (TextBox box in boxesList)
+            {
+                this.Controls.Remove(box);
+                box.Dispose();
+            }
+
+            foreach (TextBox box in textBoxesforB)
+            {
+                this.Controls.Remove(box);
+                box.Dispose();
+            }
+
+            foreach (Label label in labelsForTable)
+            {
+                this.Controls.Remove(label);
+                label.Dispose();
+            }
+
+            inputAmountOfRestrictions.Enabled = true;
+            inputAmountOfRoots.Enabled = true;
+            acceptParemetrs.Enabled = true;
+
+        amountOfRoots = 0;
+        amountOfRestriction = 0;
+        importantIndexesOfRoots.Clear();
+        function = 0;
+        boxesList.Clear();
+        comboBoxes.Clear();
+        textBoxesforB.Clear();
+        indexesOfEquel.Clear();
+        labelsForTable.Clear();
+        yVector.Clear();
+    }
     }
 }
