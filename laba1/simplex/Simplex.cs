@@ -37,8 +37,21 @@ namespace laba1.simplex
                     basis.Add(n + i);
                 }
             }
+   /*         foreach (int element in basis)
+            {
+                Console.WriteLine(element);
+            }*/
 
             n = table.GetLength(1);
+
+            /*Console.WriteLine("нерешенная симплекс-таблица:");
+            for (int i = 0; i < table.GetLength(0); i++)
+            {
+                for (int j = 0; j < table.GetLength(1); j++)
+                    Console.Write(table[i, j] + " ");
+                Console.WriteLine();
+            }*/
+
         }
 
         //result - в этот массив будут записаны полученные значения X
@@ -72,11 +85,18 @@ namespace laba1.simplex
             for (int i = 0; i < result.Length; i++)
             {
                 int k = basis.IndexOf(i + 1);
+
+                //Console.WriteLine(basis.);
+                //Console.WriteLine(k);
                 if (k != -1)
                     result[i] = table[k, 0];
                 else
                     result[i] = 0;
             }
+            /*foreach (int element in basis)
+            {
+                Console.WriteLine(element);
+            }*/
 
             return table;
         }
